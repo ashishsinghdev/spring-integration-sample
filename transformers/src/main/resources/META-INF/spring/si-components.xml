@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+	xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+	http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+	http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+	http://www.springframework.org/schema/integration/xml http://www.springframework.org/schema/integration/xml/spring-integration-xml.xsd">
+
+	<int:poller id="defaultPoller" default="true"
+		max-messages-per-poll="5" fixed-rate="200" />
+
+	<int-stream:stdin-channel-adapter id="producer-stream-adapter"
+		auto-startup="true" channel="inboundChannel">
+	</int-stream:stdin-channel-adapter>
+
+	<int:channel id="inboundChannel"></int:channel>
+
+	<!-- Simple Transformer using expression <int:transformer input-channel="inboundChannel" 
+		output-channel="outboundChannel" expression="new StringBuilder(payload).reverse().toString().toUpperCase()" 
+		/> -->
+
+	<int:channel id="outboundChannel"></int:channel>
+
+	<int-stream:stdout-channel-adapter
+		id="consumer-outbound-Channel" auto-startup="true" append-newline="true"
+		channel="outboundChannel"></int-stream:stdout-channel-adapter>
+
+
+</beans>
+
